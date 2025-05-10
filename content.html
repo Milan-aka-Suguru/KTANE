@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KTANE Guide</title>
+    <link rel="stylesheet" href="style/content.css">n
+</head>
+<body>
+    <div id="Sidebar">
+        <ul>
+            <li onclick="change(this.children[0].innerText)">
+                <p>Wires</p>
+            </li>
+            <li onclick="change(this.children[0].innerText)">
+                <p>The Button</p>
+            </li>
+            <li onclick="change(this.children[0].innerText)">
+                <p>Keypads</p>
+            </li>
+            <li onclick="change(this.children[0].innerText)">
+                <p>Simon Says</p>
+            </li>
+            <li onclick="change(this.children[0].innerText)">
+                <p>Mazes</p>
+            </li>
+            <li onclick="change(this.children[0].innerText)">
+                <p>Memory</p>
+            </li>
+            <li onclick="change(this.children[0].innerText)">
+                <p>Who's on First</p>
+            </li>
+            <li onclick="change(this.children[0].innerText)">
+                <p>Morse Code</p>
+            </li>
+            <li onclick="change(this.children[0].innerText)">
+                <p>Wire Sequences</p>
+            </li>
+            <li onclick="change(this.children[0].innerText)">
+                <p>Complicated Wires</p>
+            </li>
+            <li onclick="change(this.children[0].innerText)">
+                <p>Passwords</p>
+            </li>
+            <li onclick="change(this.children[0].innerText)">
+                <p>Knobs</p>
+            </li>
+            <li onclick="change(this.children[0].innerText)">
+                <p>Batteries</p>
+            </li>
+            <li></li>
+        </ul>
+        <div id="SizeChanger">
+            <p>Change brush size:</p>
+            <input type="range" min="1" max="40" value="20" id="Range" onchange="linewidth = this.value;console.log(this.value);">
+        </div>
+        <div id="ColorPicker">
+            <button style="background-color: red;" onclick="stokestyle = this.style.backgroundColor;" ></button>
+            <button onclick="stokestyle = this.style.backgroundColor;" style="background-color: black;"></button>
+            <button onclick="stokestyle = this.style.backgroundColor;" style="background-color: white;"></button>
+            <button onclick="stokestyle = this.style.backgroundColor;" style="background-color: green;"></button>
+            <button onclick="stokestyle = this.style.backgroundColor;" style="background-color: blue;"></button>
+            <!-- <button onclick="stokestyle = this.style.backgroundColor;" style="background-color: pink;"></button> -->
+            <button onclick="stokestyle = this.style.backgroundColor;" style="background-color: purple;"></button>
+            <button onclick="stokestyle = this.style.backgroundColor;" style="background-color: grey;"></button>
+            <button onclick="stokestyle = this.style.backgroundColor;" style="background-color: yellow;"></button>
+            <button onclick="stokestyle = this.style.backgroundColor;" style="background-color: cyan;"></button>
+            <!-- <button onclick="stokestyle = this.style.backgroundColor;" style="background-color: yellowgreen;"></button> -->
+            <button onclick="stokestyle = this.style.backgroundColor;"  style="background-color: brown;"></button>
+        </div>
+        <button id="undo" onclick="undo()">Undo</button>
+        <button id="redo" onclick="redo()">Redo</button>
+        <button id="ClearAllButton" onclick="clearAllDrawings()">Clear All</button>
+            <!-- <button onclick="undo();">Undo</button> -->
+        <button id="ClearButton" onclick="clearDrawings()">Clear Drawings</button>        
+    </div>
+    <canvas id="canvas"></canvas>
+<div id="Template"></div>
+</body>
+<script src="script/drawing.js"></script>
+</html>
