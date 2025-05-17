@@ -7,7 +7,15 @@ document.addEventListener('mousemove', function (e) {
 var width;
 var height;
 var dheight;
-var drawings;
+var drawings = {
+    "pictures/Who's on First.png": [],
+    "pictures/Wires.png": [],
+    "pictures/Simon Says.png": [],
+    "pictures/Keypad.png": [],
+    "pictures/Complicated Wires.png": [],
+    "pictures/Memory.png": [],
+    "pictures/Who's%20on%20First.png": []
+};;
 
 // Wait for the DOM to fully load before executing
 document.addEventListener('DOMContentLoaded', function () {
@@ -24,7 +32,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Set canvas dimensions to match the template element
     canvas.width = width;
     canvas.height = height;
-    getDrawings(); // Load existing drawings from local storage
 });
 
 // Initialize canvas elements and their contexts
@@ -35,7 +42,8 @@ var ctx = canvas.getContext('2d');
 var img = new Image();
 img.onload = function () {
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    loadDrawings(); // Load any existing drawings after the image is drawn
+    //loadDrawings(); // Load any existing drawings after the image is drawn
+    drawDrawings(drawings); // Load any existing drawings after the image is drawn
 };
 img.src = "pictures/Wires.png";
 
@@ -50,7 +58,7 @@ function startDraw(e) {
     painting = true;
     draw(e); // Call draw to start the stroke
     if(tempered){
-        saveDrawings(drawings);
+        
         tempered = false;
     }
 }
@@ -94,25 +102,7 @@ function draw(e) {
     drawings[currentImageKey].push([linewidth, linec, stokestyle, x, y, true]);
 
 }
-function getDrawings(){
-    drawings = localStorage.getItem('drawings');
-    if (!drawings || drawings === "undefined") {
-        // Initialize savedDrawings if it doesn't exist
-        drawings = {
-            "pictures/Batteries.png": [],
-            "pictures/Who's on First.png": [],
-            "pictures/Wires.png": [],
-            "pictures/Simon Says.png": [],
-            "pictures/Keypad.png": [],
-            "pictures/Complicated Wires.png": [],
-            "pictures/Memory.png": [],
-            "pictures/Who's%20on%20First.png": []
-        };
-    } else {
-        // Parse savedDrawings from JSON
-        drawings = JSON.parse(drawings);
-    }
-}
+
 function saveDrawings(d) {
     for(const key in d) {
         var save=[];
@@ -125,48 +115,8 @@ function saveDrawings(d) {
         }
         d[key] = save;
     }
-    localStorage.setItem('drawings', JSON.stringify(d));
+
 }
-function loadDrawings() {
-    // Load saved drawings from local storage
-    const savedDrawings = localStorage.getItem('drawings');
-    if (savedDrawings) {
-        drawings = JSON.parse(savedDrawings); // Parse and assign to the global `drawings` variable
-    } else {
-        drawings = {}; // Initialize as an empty object if nothing is saved
-    }
-    drawDrawings(drawings); // Call the function to draw the saved drawings
-    // // Clear the canvas before loading drawings
-    // ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // // Draw the image again
-    // ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    // // Get the current image key
-    // const currentImageKey = img.src.split(document.location.host + "/")[1];
-
-    // // Check if there are saved drawings for the current image
-    // if (drawings[currentImageKey] && drawings[currentImageKey].length > 0) {
-    //     // Begin drawing the saved points
-    //     ctx.beginPath();
-    //     for (let i = 0; i < drawings[currentImageKey].length; i++) {
-    //         const [linewidth, linec, stokestyle, x, y] = drawings[currentImageKey][i];
-    //         ctx.lineWidth = linewidth; // Set line width
-    //         ctx.lineCap = linec; // Set line cap style
-    //         ctx.strokeStyle = stokestyle; // Set stroke color
-    //         if (i === 0) {
-    //             // Move to the first point without drawing
-    //             ctx.moveTo(x, y);
-    //         } else {
-    //             // Draw a line to the next point
-    //             ctx.lineTo(x, y);
-    //         }
-    //     }
-    //     ctx.stroke(); // Apply the stroke to draw the lines
-    // }
-    // endDraw(); // Call endDraw to reset the path
-}
-
 function drawDrawings(drawings) {
     // Clear the canvas before loading drawings
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -179,42 +129,37 @@ function drawDrawings(drawings) {
 
     // Check if there are saved drawings for the current image
     if (drawings[currentImageKey] && drawings[currentImageKey].length > 0) {
-        // Begin drawing the saved points
-
-        ctx.beginPath();
+        ctx.beginPath(); // Start a new path for the current image
         for (let i = 0; i < drawings[currentImageKey].length; i++) {
-            if(drawings[currentImageKey][i] === null){
-                ctx.stroke(); // Apply the stroke to draw the lines
+            const point = drawings[currentImageKey][i];
+
+            if (point === null) {
+                // If a null is encountered, stroke the current path and start a new one
+                ctx.stroke();
                 ctx.beginPath();
-                i++;
-                continue;
-            }
-            const [linewidth, linec, stokestyle, x, y, visible] = drawings[currentImageKey][i]; 
-            if (!visible) {
-                continue; // Skip invisible points
-            }           
-            ctx.lineWidth = linewidth; // Set line width
-            ctx.lineCap = linec; // Set line cap style
-            ctx.strokeStyle = stokestyle; // Set stroke color
-            ctx.visible = visible; // Set visibility
-            if (i === 0) {
-                // Move to the first point without drawing
-                ctx.moveTo(x, y);
             } else {
-                // Draw a line to the next point
-                ctx.lineTo(x, y);
+                const [linewidth, linec, stokestyle, x, y, visible] = point;
+
+                if (!visible) {
+                    continue; // Skip invisible points
+                }
+
+                // Set drawing styles
+                ctx.lineWidth = linewidth;
+                ctx.lineCap = linec;
+                ctx.strokeStyle = stokestyle;
+
+                if (i === 0 || drawings[currentImageKey][i - 1] === null) {
+                    // Move to the first point without drawing
+                    ctx.moveTo(x, y);
+                } else {
+                    // Draw a line to the next point
+                    ctx.lineTo(x, y);
+                }
             }
-            // if(drawings[currentImageKey][i+1] === null){
-            //     ctx.stroke(); // Apply the stroke to draw the lines
-            //     ctx.beginPath();
-            //     i+=2;
-            // }
         }
-        ctx.stroke(); // Apply the stroke to draw the lines
-
-
+        ctx.stroke(); // Apply the stroke to draw the final path
     }
-    endDraw(); // Call endDraw to reset the path
 }
 function undo() {
     const currentImageKey = img.src.split(document.location.host + "/")[1];
@@ -252,23 +197,19 @@ function redo(){const currentImageKey = img.src.split(document.location.host + "
 function clearDrawings() {
     // Clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    console.log(img.src.split(document.location.host + "/")[1]);
+
     // Clear the drawings for the current image
     drawings[img.src.split(document.location.host + "/")[1]] = [];
 
-    // Save the updated drawings to local storage
-    saveDrawings();
-
     // Redraw the image
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    undoAmount = 0;
 }
 function clearAllDrawings() {
     // Clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     // Clear all drawings for all images
     drawings = {
-        "pictures/Batteries.png": [],
         "pictures/Who's on First.png": [],
         "pictures/Wires.png": [],
         "pictures/Simon Says.png": [],
@@ -278,29 +219,27 @@ function clearAllDrawings() {
         "pictures/Who's%20on%20First.png": []
     };
 
-    // Save the updated drawings to local storage
-    saveDrawings(drawings);
-
     // Redraw the image
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 }
 canvas.addEventListener('mousedown', startDraw);
 canvas.addEventListener('mouseup', endDraw);
 canvas.addEventListener('mousemove', draw);
-
 function change(name) {
-    saveDrawings(drawings); // Save the current drawings before changing the image
-    // Clear both canvases
+    // Clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Update the source of the first image
     img.src = "pictures/" + name + ".png";
-    // If the name matches "Who's on First", display the second canvas and update its image
+
+    // Adjust canvas height if necessary
     if (name === "Who's on First" || name === "Who's%20on%20First") {
         canvas.height = dheight;
     } else {
         canvas.height = height;
     }
     canvas.width = width;
-    loadDrawings(); // Load any existing drawings for the new image
+
+    // Load any existing drawings for the new image
+    drawDrawings(drawings);
 }
